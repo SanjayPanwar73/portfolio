@@ -4,8 +4,12 @@
   "description": "Express backend for MERN portfolio",
   "main": "index.js",
   "scripts": {
+    "build": "node -e \"console.log('No server build step required')\"",
     "start": "node index.js",
     "dev": "nodemon index.js"
+  },
+  "engines": {
+    "node": "22.x"
   },
   "dependencies": {
     "cors": "^2.8.5",
