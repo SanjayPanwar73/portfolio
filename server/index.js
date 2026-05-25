@@ -14,8 +14,40 @@ const app = express();
 const clientBuildPath = path.resolve(__dirname, "../client/build");
 const clientIndexPath = path.join(clientBuildPath, "index.html");
 const hasClientBuild = fs.existsSync(clientIndexPath);
+const normalizeOrigin = (value = "") => value.trim().replace(/\/+$/, "");
+const configuredOrigins = (process.env.CLIENT_URL || "http://localhost:3000")
+  .split(",")
+  .map(normalizeOrigin)
+  .filter(Boolean);
 
-app.use(cors({ origin: process.env.CLIENT_URL || "http://localhost:3000" }));
+app.use(
+  cors({
+    origin(origin, callback) {
+      if (!origin) {
+        callback(null, true);
+        return;
+      }
+
+      const normalizedOrigin = normalizeOrigin(origin);
+
+      if (
+        configuredOrigins.includes("*") ||
+        configuredOrigins.includes(normalizedOrigin)
+      ) {
+        callback(null, true);
+        return;
+      }
+
+      callback(
+        new Error(
+          `CORS blocked for origin ${origin}. Allowed origins: ${configuredOrigins.join(
+            ", "
+          )}`
+        )
+      );
+    },
+  })
+);
 app.use(express.json());
 
 app.use("/api/projects", projectRoutes);
