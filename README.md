@@ -2,6 +2,10 @@
 
 A clean, modern personal portfolio built with the MERN stack (MongoDB, Express, React, Node.js). Features dark/light mode, smooth animations, a contact form that saves to MongoDB, and a projects API.
 
+## Live Site
+
+Frontend: [https://portfolio-ten-omega-73.vercel.app/](https://portfolio-ten-omega-73.vercel.app/)
+
 ---
 
 ## 📁 Folder Structure
