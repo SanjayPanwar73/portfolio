@@ -21,6 +21,14 @@ app.use(express.json());
 app.use("/api/projects", projectRoutes);
 app.use("/api/contact", contactRoutes);
 
+app.get("/api", (req, res) => {
+  res.json({
+    status: "ok",
+    message: "Portfolio API is running.",
+    endpoints: ["/api/health", "/api/projects", "/api/contact"],
+  });
+});
+
 app.get("/api/health", (req, res) => {
   const database = getDatabaseStatus();
   const status = database.connected ? "ok" : "degraded";
