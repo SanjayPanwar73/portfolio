@@ -3,12 +3,18 @@ import { FiExternalLink, FiGithub, FiStar } from "react-icons/fi";
 import { fetchProjects } from "../../utils/api";
 import "./Projects.css";
 
+import zerodhaPreview from "../../assets/projects/zerodha-preview.jpeg";
+import snaptripPreview from "../../assets/projects/snaptrip-preview.jpeg";
+import axiomPreview from "../../assets/projects/axiom-preview.jpeg";
+
+const PROJECT_ACCENTS = ["#c9a96e", "#d88968", "#6d9f8b", "#7b94d1"];
+
 const FALLBACK_PROJECTS = [
   {
     _id: "zerodha-clone",
-    title: "Zerodha Clone",
+    title: "Zerodha Trading Clone",
     description:
-      "A full-stack replica of Zerodha's trading platform with user authentication, a dashboard-style interface, and simulated order placement flows.",
+      "A full-stack replica of Zerodha's trading platform with authentication, a dashboard-style interface, and simulated order placement workflows.",
     techStack: [
       "React",
       "Node.js",
@@ -20,8 +26,9 @@ const FALLBACK_PROJECTS = [
     ],
     githubUrl: "https://github.com/SanjayPanwar73/Zerodha_Clone",
     liveUrl: "https://zerodha-clone-frontend-clmm.onrender.com/",
-    imageUrl: "",
-    // featured: true,
+    imageUrl: zerodhaPreview,
+    category: "Dashboard Build",
+    status: "Live Demo",
   },
   {
     _id: "snaptrip",
@@ -39,14 +46,15 @@ const FALLBACK_PROJECTS = [
     ],
     githubUrl: "https://github.com/SanjayPanwar73/SnapTrip",
     liveUrl: "https://snaptrip-1.onrender.com/listings",
-    imageUrl: "",
-    // featured: true,
+    imageUrl: snaptripPreview,
+    category: "Booking Platform",
+    status: "Live Demo",
   },
   {
     _id: "AXIOM-AI-Stock-Analyzer",
-    title: "AXIOM-AI-Stock-Analyzer",
+    title: "AXIOM AI Stock Analyzer",
     description:
-      "AXIOM is a full-stack stock intelligence platform featuring a Bloomberg-inspired Streamlit dashboard, live WebSocket streaming via FastAPI, and an AutoML engine for 30-day price forecasting.",
+      "A stock intelligence platform with a Bloomberg-inspired Streamlit dashboard, live FastAPI WebSocket streaming, and an AutoML engine for 30-day forecasting.",
     techStack: [
       "Python",
       "FastAPI",
@@ -58,12 +66,86 @@ const FALLBACK_PROJECTS = [
     ],
     githubUrl: "https://github.com/SanjayPanwar73/AXIOM-AI-Stock-Analyzer",
     liveUrl: "",
-    imageUrl: "",
-    // featured: true,
+    imageUrl: axiomPreview,
+    category: "AI + Data Product",
+    status: "Case Study",
   },
 ];
 
-const ProjectCard = ({ project }) => {
+const getProjectInitials = (title = "Project") =>
+  title
+    .split(/[\s-]+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join("");
+
+const inferProjectCategory = ({ category, techStack = [], liveUrl }) => {
+  if (category) {
+    return category;
+  }
+
+  const stack = techStack.join(" ").toLowerCase();
+
+  if (
+    stack.includes("python") ||
+    stack.includes("fastapi") ||
+    stack.includes("tensorflow")
+  ) {
+    return "AI + Data Product";
+  }
+
+  if (stack.includes("react") && stack.includes("mongodb")) {
+    return "Full-Stack Web App";
+  }
+
+  return liveUrl ? "Interactive Build" : "Product Case Study";
+};
+
+const inferProjectStatus = ({ status, liveUrl, githubUrl }) => {
+  if (status) {
+    return status;
+  }
+
+  if (liveUrl && githubUrl) {
+    return "Code + Demo";
+  }
+
+  if (liveUrl) {
+    return "Live Demo";
+  }
+
+  if (githubUrl) {
+    return "Repository";
+  }
+
+  return "In Progress";
+};
+
+const normalizeProjects = (items) =>
+  items
+    .map((project, index) => {
+      const techStack = Array.isArray(project.techStack)
+        ? project.techStack.filter(Boolean)
+        : [];
+
+      return {
+        ...project,
+        techStack,
+        accent: project.accent || PROJECT_ACCENTS[index % PROJECT_ACCENTS.length],
+        category: inferProjectCategory({ ...project, techStack }),
+        status: inferProjectStatus(project),
+      };
+    })
+    .sort((left, right) => Number(right.featured) - Number(left.featured));
+
+const buildProjectFacts = ({ techStack, liveUrl, githubUrl }) => [
+  `${techStack.length} ${techStack.length === 1 ? "technology" : "technologies"}`,
+  liveUrl ? "Live preview available" : "Presentation-ready case study",
+  githubUrl ? "Source code included" : "Private build",
+];
+
+const ProjectCard = ({ project, index, variant = "default" }) => {
   const {
     title,
     description,
@@ -72,10 +154,21 @@ const ProjectCard = ({ project }) => {
     liveUrl,
     imageUrl,
     featured,
+    category,
+    status,
+    accent,
   } = project;
+  const isSpotlight = variant === "spotlight";
+  const visibleTech = isSpotlight ? techStack : techStack.slice(0, 6);
+  const hiddenTechCount = techStack.length - visibleTech.length;
+  const projectFacts = buildProjectFacts({ techStack, liveUrl, githubUrl });
+  const projectLabel = String(index + 1).padStart(2, "0");
 
   return (
-    <article className="project-card">
+    <article
+      className={`project-card ${isSpotlight ? "project-card--spotlight" : ""}`}
+      style={{ "--project-accent": accent }}
+    >
       <div className="project-card__image-wrap">
         {imageUrl ? (
           <img
@@ -86,26 +179,56 @@ const ProjectCard = ({ project }) => {
           />
         ) : (
           <div className="project-card__image-placeholder">
-            <span>{title[0]}</span>
+            <div className="project-card__placeholder-meta">
+              <span className="project-card__placeholder-index">
+                {projectLabel}
+              </span>
+              <span className="project-card__placeholder-category">
+                {category}
+              </span>
+            </div>
+            <span className="project-card__placeholder-initials">
+              {getProjectInitials(title)}
+            </span>
           </div>
         )}
-        {featured && (
-          <div className="project-card__featured">
-            <FiStar size={11} /> Featured
-          </div>
-        )}
+
+        <div className="project-card__badge-row">
+          <span className="project-card__status-pill">{status}</span>
+          {featured && (
+            <div className="project-card__featured">
+              <FiStar size={11} /> Featured
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="project-card__body">
+        <div className="project-card__eyebrow">
+          <span className="project-card__category">{category}</span>
+          <span className="project-card__number">{projectLabel}</span>
+        </div>
+
         <h3 className="project-card__title">{title}</h3>
         <p className="project-card__desc">{description}</p>
 
+        <div className="project-card__facts">
+          {projectFacts.map((fact) => (
+            <span key={fact}>{fact}</span>
+          ))}
+        </div>
+
         <div className="project-card__tech">
-          {techStack.map((tech) => (
+          {visibleTech.map((tech) => (
             <span key={tech} className="project-card__chip">
               {tech}
             </span>
           ))}
+          {hiddenTechCount > 0 && (
+            <span className="project-card__chip project-card__chip--muted">
+              +{hiddenTechCount} more
+            </span>
+          )}
         </div>
 
         {(githubUrl || liveUrl) && (
@@ -156,7 +279,6 @@ const Projects = () => {
           setProjects(data);
         } else {
           setProjects(FALLBACK_PROJECTS);
-          setStatusMessage("Showing selected projects from resume.");
         }
       } catch (err) {
         console.error("Failed to load projects:", err);
@@ -173,16 +295,53 @@ const Projects = () => {
     loadProjects();
   }, []);
 
+  const visibleProjects = normalizeProjects(projects);
+  const spotlightProject = visibleProjects[0] || null;
+  const secondaryProjects = visibleProjects.slice(1);
+  const liveDemoCount = visibleProjects.filter((project) => project.liveUrl).length;
+  const githubCount = visibleProjects.filter(
+    (project) => project.githubUrl
+  ).length;
+  const technologyCount = new Set(
+    visibleProjects.flatMap((project) => project.techStack)
+  ).size;
+
   return (
     <div className="projects section">
       <div className="container">
-        <div className="projects__header">
-          <p className="section-tag">What I've Built</p>
-          <h2 className="section-title">Projects</h2>
-          <p className="section-subtitle">
-            A selection of things I've built, from side projects to production
-            applications. Each one taught me something new.
-          </p>
+        <div className="projects__hero">
+          <div className="projects__header">
+            <p className="section-tag">What I've Built</p>
+            <h2 className="section-title">Projects with product thinking</h2>
+            <p className="section-subtitle">
+              A tighter view of the work I want to keep doing: full-stack web
+              apps, dashboard-style interfaces, and data-heavy tools shaped by
+              real API and deployment constraints.
+            </p>
+          </div>
+
+          {!loading && visibleProjects.length > 0 && (
+            <div className="projects__overview">
+              <div className="projects__metric">
+                <span className="projects__metric-value">
+                  {visibleProjects.length}
+                </span>
+                <span className="projects__metric-label">Selected builds</span>
+              </div>
+              <div className="projects__metric">
+                <span className="projects__metric-value">{liveDemoCount}</span>
+                <span className="projects__metric-label">Live demos</span>
+              </div>
+              <div className="projects__metric">
+                <span className="projects__metric-value">
+                  {technologyCount || githubCount}
+                </span>
+                <span className="projects__metric-label">
+                  Core technologies
+                </span>
+              </div>
+            </div>
+          )}
         </div>
 
         {loading && (
@@ -198,14 +357,28 @@ const Projects = () => {
 
         {!loading && (
           <>
-            {projects.length > 0 ? (
-              <div className="projects__grid">
-                {projects.map((project) => (
+            {visibleProjects.length > 0 ? (
+              <div className="projects__showcase">
+                {spotlightProject && (
                   <ProjectCard
-                    key={project._id || project.title}
-                    project={project}
+                    key={spotlightProject._id || spotlightProject.title}
+                    project={spotlightProject}
+                    index={0}
+                    variant="spotlight"
                   />
-                ))}
+                )}
+
+                {secondaryProjects.length > 0 && (
+                  <div className="projects__grid">
+                    {secondaryProjects.map((project, index) => (
+                      <ProjectCard
+                        key={project._id || project.title}
+                        project={project}
+                        index={index + 1}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
             ) : (
               <p className="projects__empty">Projects will appear here soon.</p>

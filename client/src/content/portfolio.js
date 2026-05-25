@@ -21,9 +21,9 @@ export const ABOUT_PARAGRAPHS = [
 ];
 
 export const ABOUT_STATS = [
-  { number: "2", label: "Internships" },
-  { number: "2", label: "Featured Apps" },
-  { number: "3", label: "Certifications" },
+  { number: "3", label: "Projects Built" },
+  { number: "2", label: "Live Demos" },
+  { number: "5", label: "Core Technologies" },
 ];
 
 export const EDUCATION = {
