@@ -1,0 +1,103 @@
+/* Footer.css */
+
+.footer {
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border);
+  padding: 2rem 0;
+}
+
+.footer__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+/* Logo */
+.footer__logo {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.footer__logo-dot { color: var(--accent); }
+
+.footer__tagline {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* Socials */
+.footer__socials {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.footer__social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  color: var(--text-muted);
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  font-size: 1rem;
+  transition: color var(--transition), border-color var(--transition),
+    background var(--transition), transform var(--transition);
+}
+
+.footer__social-link:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-bg);
+  transform: translateY(-2px);
+}
+
+/* Right */
+.footer__right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.footer__copy {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.footer__top-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  border: 1.5px solid var(--border);
+  border-radius: 50%;
+  transition: color var(--transition), border-color var(--transition),
+    background var(--transition), transform var(--transition);
+}
+
+.footer__top-btn:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-bg);
+  transform: translateY(-3px);
+}
+
+@media (max-width: 600px) {
+  .footer__inner {
+    flex-direction: column;
+    text-align: center;
+  }
+  .footer__socials { justify-content: center; }
+  .footer__right   { justify-content: center; }
+}

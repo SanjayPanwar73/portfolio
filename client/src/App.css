@@ -1,0 +1,9 @@
+/* App.css */
+
+main { min-height: 100vh; }
+
+/* Alternate section backgrounds for visual rhythm */
+#about,
+#contact {
+  background-color: var(--bg-secondary);
+}

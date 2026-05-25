@@ -1,0 +1,141 @@
+/* About.css */
+
+.about__inner {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 5rem;
+  align-items: center;
+}
+
+/* Photo */
+.about__photo-wrap {
+  position: relative;
+}
+
+.about__photo-frame {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  aspect-ratio: 4 / 5;
+  background: var(--bg-card);
+  box-shadow: 0 20px 60px var(--shadow);
+}
+
+.about__photo-frame::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--accent) 0%, transparent 60%);
+  opacity: 0.08;
+  z-index: 1;
+}
+
+.about__photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+}
+
+/* Decorative corner accent */
+.about__photo-frame::after {
+  content: '';
+  position: absolute;
+  bottom: -12px;
+  right: -12px;
+  width: 60%;
+  height: 60%;
+  border: 2px solid var(--accent);
+  border-radius: 12px;
+  z-index: -1;
+  opacity: 0.4;
+}
+
+/* Floating location badge */
+.about__photo-badge {
+  position: absolute;
+  bottom: 1.25rem;
+  left: -1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 0.5rem 0.9rem;
+  border-radius: 100px;
+  box-shadow: 0 4px 20px var(--shadow);
+  border: 1px solid var(--border);
+  z-index: 2;
+}
+
+.about__photo-badge svg {
+  color: var(--accent);
+}
+
+/* Content */
+.about__bio {
+  color: var(--text-secondary);
+  line-height: 1.8;
+  margin-bottom: 1.25rem;
+  font-size: 1rem;
+}
+
+/* Stats */
+.about__stats {
+  display: flex;
+  gap: 2.5rem;
+  margin: 2rem 0;
+  padding: 1.5rem 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.about__stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.about__stat-number {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--accent);
+  line-height: 1;
+}
+
+.about__stat-label {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Actions */
+.about__actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1.75rem;
+}
+
+@media (max-width: 900px) {
+  .about__inner {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  .about__photo-wrap {
+    max-width: 320px;
+    margin: 0 auto;
+  }
+
+  .about__photo-badge {
+    left: 0.5rem;
+  }
+}
