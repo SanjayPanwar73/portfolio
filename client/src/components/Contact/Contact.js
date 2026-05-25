@@ -1,45 +1,54 @@
-/**
- * Contact.js — Contact form section
- *
- * Controlled form that submits to POST /api/contact via axios.
- * Shows a success or error toast (react-hot-toast) after submission.
- * Validates fields client-side before making the API call.
- */
-
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { FiSend, FiMail, FiUser, FiMessageSquare } from "react-icons/fi";
+import {
+  FiLinkedin,
+  FiMail,
+  FiMapPin,
+  FiMessageSquare,
+  FiSend,
+  FiUser,
+} from "react-icons/fi";
+import { PROFILE } from "../../content/portfolio";
 import { sendMessage } from "../../utils/api";
 import "./Contact.css";
 
 const INITIAL_FORM = { name: "", email: "", message: "" };
 
 const Contact = () => {
-  const [form,       setForm]       = useState(INITIAL_FORM);
-  const [errors,     setErrors]     = useState({});
+  const [form, setForm] = useState(INITIAL_FORM);
+  const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
 
-  // Simple client-side validation
   const validate = () => {
-    const e = {};
-    if (!form.name.trim() || form.name.length < 2)
-      e.name = "Name must be at least 2 characters";
-    if (!form.email.trim() || !/\S+@\S+\.\S+/.test(form.email))
-      e.email = "Please enter a valid email address";
-    if (!form.message.trim() || form.message.length < 10)
-      e.message = "Message must be at least 10 characters";
-    return e;
+    const nextErrors = {};
+
+    if (!form.name.trim() || form.name.length < 2) {
+      nextErrors.name = "Name must be at least 2 characters";
+    }
+
+    if (!form.email.trim() || !/\S+@\S+\.\S+/.test(form.email)) {
+      nextErrors.email = "Please enter a valid email address";
+    }
+
+    if (!form.message.trim() || form.message.length < 10) {
+      nextErrors.message = "Message must be at least 10 characters";
+    }
+
+    return nextErrors;
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const handleChange = (event) => {
+    const { name, value } = event.target;
     setForm((prev) => ({ ...prev, [name]: value }));
-    // Clear the error for the field being edited
-    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
+
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
@@ -47,21 +56,30 @@ const Contact = () => {
     }
 
     setSubmitting(true);
+
     try {
       await sendMessage(form);
-      toast.success("Message sent! I'll get back to you soon 🙌");
+      toast.success("Message sent. I'll get back to you soon.");
       setForm(INITIAL_FORM);
       setErrors({});
     } catch (err) {
       const serverErrors = err.response?.data?.errors;
+      const serverMessage = err.response?.data?.error || err.response?.data?.message;
+
       if (serverErrors) {
-        // Map server validation errors back to fields
-        const mapped = {};
-        serverErrors.forEach(({ field, message }) => { mapped[field] = message; });
-        setErrors(mapped);
+        const mappedErrors = {};
+        serverErrors.forEach((issue) => {
+          const field = issue.field || issue.path;
+          const message = issue.message || issue.msg;
+
+          if (field && message) {
+            mappedErrors[field] = message;
+          }
+        });
+        setErrors(mappedErrors);
         toast.error("Please fix the form errors");
       } else {
-        toast.error("Something went wrong. Please try again.");
+        toast.error(serverMessage || "Something went wrong. Please try again.");
       }
     } finally {
       setSubmitting(false);
@@ -71,31 +89,56 @@ const Contact = () => {
   return (
     <div className="contact section">
       <div className="container contact__inner">
-        {/* Left: text content */}
         <div className="contact__info">
           <p className="section-tag">Get In Touch</p>
-          <h2 className="section-title">Let's work<br />together</h2>
+          <h2 className="section-title">
+            Let's work
+            <br />
+            together
+          </h2>
           <p className="contact__desc">
-            Have a project in mind, a question, or just want to say hi?
-            My inbox is always open. I try to respond within 24 hours.
+            Have a project in mind, want to discuss an internship, or just want
+            to say hello? Reach out and I will get back to you as soon as I can.
           </p>
 
           <div className="contact__details">
-            <a href="mailto:you@email.com" className="contact__detail-item">
-              <span className="contact__detail-icon"><FiMail /></span>
-              <span>panwarsanjay710@email.com</span>
+            <a
+              href={`mailto:${PROFILE.email}`}
+              className="contact__detail-item"
+            >
+              <span className="contact__detail-icon">
+                <FiMail />
+              </span>
+              <span>{PROFILE.email}</span>
             </a>
+
+            <a
+              href={PROFILE.socials.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="contact__detail-item"
+            >
+              <span className="contact__detail-icon">
+                <FiLinkedin />
+              </span>
+              <span>LinkedIn Profile</span>
+            </a>
+
+            <div className="contact__detail-item">
+              <span className="contact__detail-icon">
+                <FiMapPin />
+              </span>
+              <span>{PROFILE.location}</span>
+            </div>
           </div>
         </div>
 
-        {/* Right: form */}
         <form
           className="contact__form"
           onSubmit={handleSubmit}
           noValidate
           aria-label="Contact form"
         >
-          {/* Name */}
           <div className={`form-group ${errors.name ? "form-group--error" : ""}`}>
             <label htmlFor="name" className="form-label">
               <FiUser size={14} /> Name
@@ -113,7 +156,6 @@ const Contact = () => {
             {errors.name && <p className="form-error">{errors.name}</p>}
           </div>
 
-          {/* Email */}
           <div className={`form-group ${errors.email ? "form-group--error" : ""}`}>
             <label htmlFor="email" className="form-label">
               <FiMail size={14} /> Email
@@ -131,7 +173,6 @@ const Contact = () => {
             {errors.email && <p className="form-error">{errors.email}</p>}
           </div>
 
-          {/* Message */}
           <div className={`form-group ${errors.message ? "form-group--error" : ""}`}>
             <label htmlFor="message" className="form-label">
               <FiMessageSquare size={14} /> Message
@@ -148,7 +189,6 @@ const Contact = () => {
             {errors.message && <p className="form-error">{errors.message}</p>}
           </div>
 
-          {/* Submit */}
           <button
             type="submit"
             className="btn-primary contact__submit"

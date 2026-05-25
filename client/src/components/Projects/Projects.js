@@ -1,10 +1,3 @@
-/**
- * Projects.js - Projects section
- *
- * Tries to load projects from the API first.
- * Falls back to selected portfolio projects when the API is empty or offline.
- */
-
 import { useEffect, useState } from "react";
 import { FiExternalLink, FiGithub, FiStar } from "react-icons/fi";
 import { fetchProjects } from "../../utils/api";
@@ -28,7 +21,7 @@ const FALLBACK_PROJECTS = [
     githubUrl: "https://github.com/SanjayPanwar73/Zerodha_Clone",
     liveUrl: "https://zerodha-clone-frontend-clmm.onrender.com/",
     imageUrl: "",
-    featured: true,
+    // featured: true,
   },
   {
     _id: "snaptrip",
@@ -47,7 +40,26 @@ const FALLBACK_PROJECTS = [
     githubUrl: "https://github.com/SanjayPanwar73/SnapTrip",
     liveUrl: "https://snaptrip-1.onrender.com/listings",
     imageUrl: "",
-    featured: true,
+    // featured: true,
+  },
+  {
+    _id: "AXIOM-AI-Stock-Analyzer",
+    title: "AXIOM-AI-Stock-Analyzer",
+    description:
+      "AXIOM is a full-stack stock intelligence platform featuring a Bloomberg-inspired Streamlit dashboard, live WebSocket streaming via FastAPI, and an AutoML engine for 30-day price forecasting.",
+    techStack: [
+      "Python",
+      "FastAPI",
+      "WebSockets",
+      "Streamlit",
+      "Scikit-learn",
+      "TensorFlow",
+      "PostgreSQL",
+    ],
+    githubUrl: "https://github.com/SanjayPanwar73/AXIOM-AI-Stock-Analyzer",
+    liveUrl: "",
+    imageUrl: "",
+    // featured: true,
   },
 ];
 
@@ -150,6 +162,8 @@ const Projects = () => {
         console.error("Failed to load projects:", err);
         setProjects(FALLBACK_PROJECTS);
         setStatusMessage(
+          err.response?.data?.error ||
+            "Project API is unavailable right now. Showing selected projects from resume."
         );
       } finally {
         setLoading(false);
@@ -166,7 +180,7 @@ const Projects = () => {
           <p className="section-tag">What I've Built</p>
           <h2 className="section-title">Projects</h2>
           <p className="section-subtitle">
-            A selection of things I've built - from side projects to production
+            A selection of things I've built, from side projects to production
             applications. Each one taught me something new.
           </p>
         </div>

@@ -1,15 +1,12 @@
-/**
- * Footer.js — Site footer with social links and copyright
- */
-
-import { FiGithub, FiLinkedin, FiArrowUp } from "react-icons/fi";
+import { FiArrowUp, FiGithub, FiLinkedin } from "react-icons/fi";
 import { SiLeetcode } from "react-icons/si";
+import { PROFILE } from "../../content/portfolio";
 import "./Footer.css";
 
 const SOCIALS = [
-  { label: "GitHub",   icon: <FiGithub />,   href: "https://github.com/SanjayPanwar73"        },
-  { label: "LinkedIn", icon: <FiLinkedin />,  href: "https://www.linkedin.com/in/sanjaypanwar73"   },
-  { label: "LeetCode", icon: <SiLeetcode />, href: "https://leetcode.com/u/sanjay736/" },
+  { label: "GitHub", icon: <FiGithub />, href: PROFILE.socials.github },
+  { label: "LinkedIn", icon: <FiLinkedin />, href: PROFILE.socials.linkedin },
+  { label: "LeetCode", icon: <SiLeetcode />, href: PROFILE.socials.leetcode },
 ];
 
 const Footer = () => {
@@ -19,15 +16,13 @@ const Footer = () => {
   return (
     <footer className="footer">
       <div className="container footer__inner">
-        {/* Left: logo + tagline */}
         <div className="footer__left">
           <span className="footer__logo">
             SP<span className="footer__logo-dot">.</span>
           </span>
-          <p className="footer__tagline">Building things for the web.</p>
+          <p className="footer__tagline">{PROFILE.footerTagline}</p>
         </div>
 
-        {/* Center: social links */}
         <div className="footer__socials">
           {SOCIALS.map(({ label, icon, href }) => (
             <a
@@ -44,9 +39,8 @@ const Footer = () => {
           ))}
         </div>
 
-        {/* Right: copyright + back to top */}
         <div className="footer__right">
-          <p className="footer__copy">© {year} Sanjay Panwar</p>
+          <p className="footer__copy">Copyright {year} {PROFILE.name}</p>
           <button
             className="footer__top-btn"
             onClick={scrollToTop}

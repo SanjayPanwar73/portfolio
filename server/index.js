@@ -4,7 +4,7 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const connectDB = require("./config/db");
+const { connectDB, getDatabaseStatus } = require("./config/db");
 const projectRoutes = require("./routes/projects");
 const contactRoutes = require("./routes/contact");
 
@@ -16,9 +16,16 @@ app.use(express.json());
 app.use("/api/projects", projectRoutes);
 app.use("/api/contact", contactRoutes);
 
-app.get("/api/health", (req, res) =>
-  res.json({ status: "ok", timestamp: new Date().toISOString() })
-);
+app.get("/api/health", (req, res) => {
+  const database = getDatabaseStatus();
+  const status = database.connected ? "ok" : "degraded";
+
+  res.status(database.connected ? 200 : 503).json({
+    status,
+    timestamp: new Date().toISOString(),
+    database,
+  });
+});
 
 app.use((req, res) => res.status(404).json({ error: "Route not found" }));
 app.use((err, req, res, next) => {
@@ -27,6 +34,16 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 5000;
-connectDB().then(() => {
-  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-});
+
+const startServer = async () => {
+  await connectDB();
+
+  app.listen(PORT, () => {
+    const { connected } = getDatabaseStatus();
+    console.log(
+      `Server running on port ${PORT}${connected ? "" : " (database offline)"}`
+    );
+  });
+};
+
+startServer();
