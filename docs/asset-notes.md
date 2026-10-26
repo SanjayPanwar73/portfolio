@@ -10,10 +10,11 @@
 ## Resume
 
 - Source supplied by the user: `C:\Users\DELL\Downloads\sanjay_Panwar_Resume.pdf`.
-- Public download: `client/public/sanjay_panwar_resume.pdf`, copied byte-for-byte, 651,848 bytes.
-- SHA-256 of both files: `55F917DD65D2AD1FA782E1EAA272047D5A5490E7EF8FEB6CD8804C79FD7C5FB2`.
+- Public download: `client/public/sanjay_panwar_resume.pdf`, copied byte-for-byte, 661,456 bytes.
+- SHA-256 of the source and public download: `F09E0ABE143A895E4B8F6325B634B71935E3D4DFB4D2E6B9FE7359290666B706`.
 - The PDF confirms AI Automation & Intelligent Solutions Intern, BharatCares (CSRBOX Group), remote, June-July 2026: a six-week AICTE-recognized program with masterclasses, workflow exercises, Transformer/LLM fundamentals, prompt engineering, IBM SkillsBuild modules, and Lean Canvas planning. The portfolio describes learning and exercises without invented deployment outcomes.
 - It also confirms Web Development Intern, Elevate Labs, remote, August-September 2025, and B.Tech Computer Science & Engineering (AI), Mandsaur University, 2023-2027. The summary identifies Sanjay as a final-year student.
+- The updated resume also lists a Full Stack Development (MERN) and DSA in Java certification from Apna College and a GenAI Powered Data Analytics job simulation from Forage.
 - Project source remains authoritative where the resume's SnapTrip technology/features differ from its repository.
 - Text was inspected read-only by decompressing PDF text streams. The PDF was not regenerated, edited, or reformatted. Its actual browser download was checked.
 
