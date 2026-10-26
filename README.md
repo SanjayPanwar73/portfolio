@@ -1,181 +1,101 @@
-# 🚀 MERN Portfolio
+﻿# Sanjay Panwar - Developer Portfolio
 
-A clean, modern personal portfolio built with the MERN stack (MongoDB, Express, React, Node.js). Features dark/light mode, smooth animations, a contact form that saves to MongoDB, and a projects API.
+A portfolio for a final-year B.Tech CSE (AI) student and full stack developer. The interface follows the user's reference: a narrow, near-black layout, serif headings, restrained borders, a real portrait, and compact project cards. A light theme is available. On mobile, five labelled icon tabs sit in a rounded bottom bar that follows the active theme, with the current page highlighted blue.
 
-## Live Site
+The application uses local typed content. Browsing projects, downloading the resume, and making contact require no backend or API credentials.
 
-Frontend: [https://portfolio-ten-omega-73.vercel.app/](https://portfolio-ten-omega-73.vercel.app/)
+## Run locally
 
----
-
-## 📁 Folder Structure
-
-```
-portfolio/
-├── client/                     # React frontend (Create React App)
-│   ├── public/
-│   │   └── index.html          # HTML shell, Google Fonts link
-│   └── src/
-│       ├── App.js              # Root component — mounts all sections
-│       ├── index.js            # ReactDOM entry — wraps ThemeProvider + Toaster
-│       ├── index.css           # Global CSS variables (dark/light tokens), base styles
-│       ├── context/
-│       │   └── ThemeContext.js # Dark/light mode state + localStorage persistence
-│       ├── hooks/
-│       │   └── useFetch.js     # Generic data-fetching hook with cancel-on-unmount
-│       ├── utils/
-│       │   └── api.js          # Axios instance + named API call helpers
-│       └── components/
-│           ├── Navbar/         # Sticky nav, active-section highlight, mobile menu
-│           ├── Hero/           # Landing section with animated blobs + CTAs
-│           ├── About/          # Photo placeholder, bio, stats, resume download
-│           ├── Skills/         # Grouped tech stack icon cards
-│           ├── Projects/       # Fetches from API, loading spinner, project cards
-│           ├── Contact/        # Validated form → POST /api/contact, toast feedback
-│           └── Footer/         # Social links, back-to-top
-│
-├── server/                     # Express + MongoDB backend
-│   ├── index.js                # App entry — middleware, routes, error handler, listen
-│   ├── seed.js                 # One-time DB seeder with 4 sample projects
-│   ├── .env.example            # Template for required env vars
-│   ├── config/
-│   │   └── db.js               # Mongoose connection helper
-│   ├── models/
-│   │   ├── Project.js          # Schema: title, description, techStack[], urls, timestamps
-│   │   └── Message.js          # Schema: name, email, message, read flag, timestamps
-│   └── routes/
-│       ├── projects.js         # GET /api/projects, POST /api/projects
-│       └── contact.js          # POST /api/contact (with express-validator)
-│
-├── package.json                # Root — concurrently dev script
-└── README.md
-```
-
----
-
-## ⚡ Quick Start
-
-### Prerequisites
-- **Node.js** ≥ 18
-- **MongoDB** running locally, or a [MongoDB Atlas](https://www.mongodb.com/atlas) connection string
-
-### 1. Clone & install
+Use Node.js 22.12 or newer and npm. From the repository root:
 
 ```bash
-git clone https://github.com/yourusername/mern-portfolio.git
-cd mern-portfolio
-npm run install-all   # installs root + server + client deps
-```
-
-### 2. Configure environment
-
-```bash
-cd server
-cp .env.example .env
-```
-
-Edit `server/.env`:
-
-```env
-PORT=5000
-MONGO_URI=mongodb://localhost:27017/portfolio
-CLIENT_URL=http://localhost:3000
-```
-
-### 3. Seed the database (optional but recommended)
-
-```bash
-cd server
-node seed.js
-```
-
-This drops any existing projects and inserts 4 sample ones.
-
-### 4. Run in development
-
-From the **root** of the project:
-
-```bash
+npm install
+npm ci --prefix client
 npm run dev
 ```
 
-This starts both servers concurrently:
-- **Backend** → http://localhost:5000
-- **Frontend** → http://localhost:3000
+Open **http://127.0.0.1:5173**.
 
----
+| Command | Purpose |
+| --- | --- |
+| `npm run dev` | Start the Vite client |
+| `npm run typecheck` | Check client TypeScript |
+| `npm run lint` | Run the configured ESLint checks |
+| `npm test` | Run DOM interaction tests |
+| `npm run test:server` | Run isolated backend HTTP integration tests |
+| `npm run test:all` | Run lint, frontend/backend tests, production build, and browser tests |
+| `npm run build` | Type-check and build into `client/dist` |
+| `npm run preview` | Serve the production build at port 4173 |
+| `npm run test:browser` | Run Playwright; starts/stops production preview automatically |
+| `npm run server` | Start the preserved optional Express server in development |
+| `npm start` | Start the optional Express server |
 
-## 🌐 API Reference
+For browser review, run `npm run build`, then `npm run test:browser`. Playwright starts the preview at port 4173 and stops it after the run, or reuses an existing preview outside CI. On Windows it uses installed Google Chrome; set `PLAYWRIGHT_CHROME_PATH` for a different executable. Other systems use Playwright's installed Chromium. Screenshots and traces are written to ignored `.qa/`.
 
-All routes are prefixed with `/api`.
+To run the complete suite, install the optional server test dependencies once with `npm ci --prefix server`, then run `npm run test:all`. Backend tests use injected fake models and temporary HTTP servers; they do not load `server/.env`, connect to MongoDB, or store real messages/projects.
 
-| Method | Endpoint        | Description                          | Body                                      |
-|--------|-----------------|--------------------------------------|-------------------------------------------|
-| GET    | `/api/projects` | Fetch all projects (newest first)    | —                                         |
-| POST   | `/api/projects` | Add a new project                    | `{ title, description, techStack[], githubUrl?, liveUrl?, imageUrl? }` |
-| POST   | `/api/contact`  | Submit a contact message             | `{ name, email, message }`                |
-| GET    | `/api/health`   | Server health check                  | —                                         |
+## Pages and implementation
 
-### Example: Add a project
+| Route | Content |
+| --- | --- |
+| `/` | Introduction, toolkit, current learning, selected projects, and contact |
+| `/skills` | Expanded technical toolkit and learning focus |
+| `/work` | Four verified project case studies with source links |
+| `/experience` | BharatCares, Elevate Labs, and education |
+| `/about` | Background, education, and toolkit |
 
-```bash
-curl -X POST http://localhost:5000/api/projects \
-  -H "Content-Type: application/json" \
-  -d '{
-    "title": "My App",
-    "description": "A cool thing I built",
-    "techStack": ["React", "Node.js"],
-    "githubUrl": "https://github.com/you/app",
-    "liveUrl": "https://app.vercel.app"
-  }'
-```
+The original React 18.2/Create React App setup was inspected locally and through the connected GitHub plugin before migration to React 19 and Vite 7 with TypeScript. The client uses Tailwind CSS 4, Motion 14, and Lucide React. Peer dependencies resolve without `--force` or `--legacy-peer-deps`. Geist, Geist Mono, and Instrument Serif are bundled locally.
 
----
+The layouts and components were written for this repository using the user's [visual reference](https://my-portfolio-one-roan-33.vercel.app/). Profile details, experience, and project stories belong to Sanjay. The mobile bottom navigation follows the separately supplied image.
 
-## 🎨 Customisation Guide
+| File | Edit here for |
+| --- | --- |
+| `client/src/studio/content.ts` | Profile, skills, projects, internship facts, and education |
+| `client/src/studio/App.tsx` | Routes, page composition, metadata, and footer |
+| `client/src/studio/Navigation.tsx` | Desktop navigation, mobile bottom tabs, clock, and theme toggle |
+| `client/src/studio/Hero.tsx` | Portrait, introduction, social links, and resume actions |
+| `client/src/studio/SelectedWork.tsx` | Project cards and native case-study disclosures |
+| `client/src/studio/Contact.tsx` | Contact form, email draft, and copy feedback |
+| `client/src/studio/styles.css` | Responsive layout and dark/light design tokens |
+| `client/index.html` | Initial metadata and no-JavaScript contact/resume fallback |
+| `server/app.js` | Optional HTTP app, routing, CORS, static hosting, and error responses |
+| `server/index.js` | Environment loading, database connection, and production startup |
 
-| What to change            | Where                                                   |
-|---------------------------|---------------------------------------------------------|
-| Your name / tagline       | `client/src/components/Hero/Hero.js`                    |
-| Your photo                | `client/src/components/About/About.js` — replace the `<div>` placeholder with `<img>` |
-| Bio text & stats          | `client/src/components/About/About.js`                  |
-| Social links              | `Hero.js` and `Footer/Footer.js`                        |
-| Email address             | `Contact/Contact.js`                                    |
-| Tech stack icons          | `Skills/Skills.js` — add/remove from the `SKILL_GROUPS` array |
-| Colour palette            | `client/src/index.css` — edit the CSS custom properties in `:root` / `body.light` |
-| Navbar logo initials      | `Navbar/Navbar.js` and `Footer/Footer.js`               |
+`src/studio` is the active application. The old CRA UI, unused project preview images, duplicate sample seed scripts, and unused helpers were removed. The requested Interactive study section and its Three.js, React Three Fiber, and Drei dependencies were also removed. The original portrait and editable social-card source are preserved in `docs/assets/`, outside the shipped site; `.qa/` contains local reference and review evidence.
 
----
+The contact form validates input and opens an addressed email draft in the visitor's email application. It does not claim that a message was sent. Direct email and copy-email actions remain available. No frontend secrets are needed.
 
-## 🚀 Deployment
+## Verified content and assets
 
-### Backend (Render / Railway / Fly.io)
-1. Set the environment variables (`MONGO_URI`, `CLIENT_URL`, `PORT`) in your hosting dashboard.
-2. Set build command: `cd server && npm install`
-3. Set start command: `node server/index.js`
+Project stories were checked against repository source through the GitHub plugin. No unverified live demos, business metrics, or project screenshots are presented.
 
-### Frontend (Vercel / Netlify)
-1. Set **Root Directory** to `client`.
-2. Add env var: `REACT_APP_API_URL=https://your-backend-url.com/api`
-3. Deploy — Vercel auto-detects Create React App.
+| Project | Verified implementation |
+| --- | --- |
+| [Samadhan-Setu](https://github.com/SanjayPanwar73/Samadhan-Setu) | React/FastAPI grievance workflows, Transformers classification, FAISS retrieval, explainable priority, and staff routing |
+| [SearchNest](https://github.com/SanjayPanwar73/SearchNest) | FastAPI, Jinja2, SQLAlchemy, provider adapters, hashed API keys, quotas, and request activity |
+| [DietTracker](https://github.com/SanjayPanwar73/DietTracker) | React/Express/MongoDB nutrition logging, JWT-protected records, charts, and external meal-planning services |
+| [SnapTrip](https://github.com/SanjayPanwar73/SnapTrip) | Express/EJS listing management, MongoDB sessions, Passport authentication, favorites, reviews, and maps |
 
----
+SnapTrip uses EJS; booking and payment flows are not claimed. DietTracker's estimator uses food-name text; image recognition is not claimed. Research is in [SearchNest and Samadhan notes](docs/searchnest-samadhan-research.md) and [DietTracker and SnapTrip notes](docs/diettracker-snaptrip-research.md).
 
-## 🛠 Tech Stack
+The portrait comes from the original repository image. The downloadable resume is the actual updated PDF supplied by the user, including BharatCares (June-July 2026), Elevate Labs (August-September 2025), and Mandsaur University (2023-2027). See [asset provenance](docs/asset-notes.md).
 
-| Layer     | Technology                  |
-|-----------|-----------------------------|
-| Frontend  | React 18, React Router v6   |
-| Styling   | Custom CSS (CSS variables)  |
-| HTTP      | Axios                       |
-| Toasts    | react-hot-toast             |
-| Backend   | Node.js, Express 4          |
-| Database  | MongoDB, Mongoose           |
-| Validation| express-validator           |
-| Dev tools | nodemon, concurrently       |
+## Static hosting
 
----
+| Setting | Value |
+| --- | --- |
+| Root directory | `client` |
+| Install command | `npm ci` |
+| Build command | `npm run build` |
+| Output directory | `dist` |
+| Environment variables | None required |
 
-## 📄 License
+Vercel rewrites in `client/vercel.json` and Netlify's `public/_redirects` support direct navigation and refresh on all five routes. Equivalent hosts need an SPA fallback to `index.html` for page routes while serving public files normally.
 
-MIT — use it however you like.
+Metadata currently uses the existing portfolio origin `https://portfolio-ten-omega-73.vercel.app/`. When changing domains, update `profile.siteUrl` in `content.ts`, the canonical/Open Graph/JSON-LD URLs in `client/index.html`, and `public/robots.txt` and `public/sitemap.xml`.
+
+The preserved Express server can also host `client/dist`: install its dependencies with `npm ci --prefix server`, build the client, and run `npm start`. It defaults to port 5000. Optional API configuration is documented in `server/.env.example`; MongoDB is needed only for those APIs. The portfolio makes no API requests.
+
+`GET /api/projects` is public. Project creation is an admin operation: set a private `PROJECT_ADMIN_TOKEN` on the server and send it as `Authorization: Bearer <token>` for `POST /api/projects`. Writes are disabled when no token is configured. Never place that token in frontend code. The contact API validates and stores messages when MongoDB is connected; the website itself uses email drafts instead.
+
+See [verification notes](docs/verification.md) for checks, screenshot evidence, and scope limits. No deployment, push, merge, or database seed is part of this implementation.
